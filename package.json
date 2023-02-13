@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "test:watch": "vitest run --watch",
+    "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
@@ -21,6 +21,8 @@
     "@typescript-eslint/parser": "^5.51.0",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.4",
     "typescript": "^4.9.5",

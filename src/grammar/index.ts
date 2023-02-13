@@ -1,12 +1,24 @@
-type Vocabulary = string[];
-
-export enum States {
-  A = "A",
+export type Production<VocabularyT> = {
+  from: VocabularyT;
+  to: VocabularyT[];
+};
+export interface Grammar<VocabularyT> {
+  readonly start: VocabularyT;
+  readonly productions: ReadonlyArray<Production<VocabularyT>>;
+  readonly nonTerminal: ReadonlyArray<VocabularyT>;
+  readonly terminal: ReadonlyArray<VocabularyT>;
 }
 
-export interface Grammar<StateT> {
-  states: StateT[];
-  start: StateT;
-  transitions: [StateT, StateT][];
-  end: StateT[];
+export function createGrammar<VocabularyT>(
+  start: VocabularyT,
+  productions: ReadonlyArray<Production<VocabularyT>>,
+  nonTerminal: ReadonlyArray<VocabularyT>,
+  terminal: ReadonlyArray<VocabularyT>,
+): Grammar<VocabularyT> {
+  return {
+    start,
+    productions,
+    nonTerminal,
+    terminal,
+  };
 }
