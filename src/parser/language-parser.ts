@@ -1,3 +1,4 @@
+import { console } from "fp-ts";
 import { Grammar } from "../grammar";
 import { createInput, Input } from "./input";
 
@@ -9,15 +10,9 @@ export class LanguageParser<VocabularyT> {
     currentState: VocabularyT = this._grammar.start,
   ): boolean {
     const { productions, terminal } = this._grammar;
+    console.log({ input, currentState });
     if (input.index === input.input.length) {
-      return (
-        terminal.includes(input.input[input.index]) &&
-        productions.some(
-          (production) =>
-            production.from === currentState &&
-            production.to[0] === input.input[input.index],
-        )
-      );
+      return terminal.includes(currentState);
     }
 
     const nextChar = input.input[input.index];

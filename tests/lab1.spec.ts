@@ -44,7 +44,7 @@ const productions: ReadonlyArray<Production<Lab1Vocabulary>> = [
   },
 ];
 
-const grammar = createGrammar("S", productions, nonTerminal, terminal);
+const grammar = createGrammar("S", productions, terminal, nonTerminal);
 const parser = new LanguageParser(grammar);
 
 describe("lab1", () => {
@@ -70,7 +70,7 @@ describe("lab1", () => {
     });
 
     it("should mark invalid sentences that do not reach the end of the automaton", () => {
-      const sentences = ["abce", "abcde", "acd"];
+      const sentences = ["abc", "abcde", "acd"];
 
       sentences.forEach((sentence) => {
         expect(
@@ -88,7 +88,7 @@ describe("lab1", () => {
       });
     });
 
-    it.each(["abce", "abcfed", "add"])(
+    it.each(["abce", "abcdfd", "cdd"])(
       "should validate %s as a valid sentence",
       (sentence) => {
         expect(
