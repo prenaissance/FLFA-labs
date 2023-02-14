@@ -1,7 +1,7 @@
 import { expect } from "vitest";
 import { it, describe } from "vitest";
 import { createGrammar, Production } from "@/grammar";
-import { createStringInput } from "@/parser/input";
+import { createInput, createStringInput } from "@/parser/input";
 import { LanguageParser } from "@/parser/language-parser";
 
 const nonTerminal = ["a", "b", "c", "d", "e", "f"] as const;
@@ -96,5 +96,26 @@ describe("lab1", () => {
         ).toBe(true);
       },
     );
+  });
+
+  describe("generation", () => {
+    it("should generate sentences that pass validation", () => {
+      const sentences = new Array(100)
+        .fill(null)
+        .map(() => parser.generateSentence());
+
+      sentences.forEach((sentence) => {
+        expect(parser.isValid(createInput<Lab1Vocabulary[]>(sentence))).toBe(
+          true,
+        );
+      });
+    });
+
+    it("should throw when completing a sentence with a start word outside the vocabulary", () => {
+      const input = ["x"];
+      expect(() =>
+        parser.generateSentence(input as Lab1Vocabulary[]),
+      ).toThrow();
+    });
   });
 });
