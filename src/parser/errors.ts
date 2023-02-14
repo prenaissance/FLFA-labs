@@ -1,4 +1,4 @@
-export class ParserError extends Error {
+export class ParsingError extends Error {
   readonly index: number;
   constructor(message: string, index: number) {
     super(message);

@@ -1,8 +1,8 @@
 import { expect } from "vitest";
 import { it, describe } from "vitest";
-import { createGrammar, Production } from "../src/grammar";
-import { createStringInput } from "../src/parser/input";
-import { LanguageParser } from "../src/parser/language-parser";
+import { createGrammar, Production } from "@/grammar";
+import { createStringInput } from "@/parser/input";
+import { LanguageParser } from "@/parser/language-parser";
 
 const nonTerminal = ["a", "b", "c", "d", "e", "f"] as const;
 

@@ -1,5 +1,6 @@
-import { console } from "fp-ts";
-import { Grammar } from "../grammar";
+import { Grammar } from "@/grammar";
+import { choice } from "@/common/utilities";
+import { ParsingError } from "./errors";
 import { createInput, Input } from "./input";
 
 export class LanguageParser<VocabularyT> {
@@ -10,7 +11,6 @@ export class LanguageParser<VocabularyT> {
     currentState: VocabularyT = this._grammar.start,
   ): boolean {
     const { productions, terminal } = this._grammar;
-    console.log({ input, currentState });
     if (input.index === input.input.length) {
       return terminal.includes(currentState);
     }
@@ -26,5 +26,28 @@ export class LanguageParser<VocabularyT> {
 
     const nextInput = createInput(input.input, input.index + 1);
     return this.isValid(nextInput, production.to.at(-1));
+  }
+
+  generateSentence(
+    existing: VocabularyT[] = [this._grammar.start],
+  ): VocabularyT[] {
+    const { productions, terminal } = this._grammar;
+    const head = existing.at(-1)!;
+    if (terminal.includes(head)) {
+      return existing;
+    }
+
+    const outcomes = productions
+      .filter((production) => production.from === head)
+      .map((production) => production.to);
+
+    if (!outcomes.length) {
+      throw new ParsingError("Cannot reach an end state", existing.length - 1);
+    }
+
+    return this.generateSentence([
+      ...existing.slice(0, -1),
+      ...choice(outcomes),
+    ]);
   }
 }
