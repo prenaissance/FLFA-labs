@@ -8,16 +8,12 @@ specifiers:
   eslint-import-resolver-typescript: ^3.5.3
   eslint-plugin-import: ^2.27.5
   eslint-plugin-prettier: ^4.2.1
-  fp-ts: ^2.13.1
   prettier: ^2.8.4
   rimraf: ^4.1.2
   typescript: ^4.9.5
   vite: ^4.1.1
   vite-tsconfig-paths: ^4.0.5
   vitest: ^0.28.4
-
-dependencies:
-  fp-ts: 2.13.1
 
 devDependencies:
   '@typescript-eslint/eslint-plugin': 5.51.0_z4swst3wuuqk4hlme4ajzslgh4
@@ -1192,10 +1188,6 @@ packages:
     dependencies:
       is-callable: 1.2.7
     dev: true
-
-  /fp-ts/2.13.1:
-    resolution: {integrity: sha512-0eu5ULPS2c/jsa1lGFneEFFEdTbembJv8e4QKXeVJ3lm/5hyve06dlKZrpxmMwJt6rYen7sxmHHK2CLaXvWuWQ==}
-    dev: false
 
   /fs.realpath/1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
