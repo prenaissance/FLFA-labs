@@ -131,7 +131,14 @@ export class Automaton {
     ]);
   }
 
-  serializeToDot(): string {
-    return "";
+  serializeToDot(name = "automaton"): string {
+    const header = `digraph ${name} {`;
+    const transitions = this._transitions.map(
+      (t) => `  "${t.from}" -> "${t.to}" [label = "${t.effect}"]`,
+    );
+    const finalStates = this._finalStates.map(
+      (s) => `  "${s}" [shape = doublecircle]`,
+    );
+    return [header, ...transitions, ...finalStates, "}"].join("\n");
   }
 }

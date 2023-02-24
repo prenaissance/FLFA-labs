@@ -18,6 +18,9 @@ plugins:
   - prettier
 rules:
   eqeqeq: error
+  no-trailing-spaces: error
+  no-irregular-whitespace: error
+  no-multiple-empty-lines: error
   "import/no-unresolved": "error"
   "@typescript-eslint/no-non-null-assertion": "off"
 settings:
@@ -25,4 +28,3 @@ settings:
     "@typescript-eslint/parser": [".ts", ".tsx"]
   "import/resolver":
     typescript: {}
-      

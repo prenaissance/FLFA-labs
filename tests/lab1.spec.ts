@@ -1,48 +1,14 @@
 import { expect } from "vitest";
 import { it, describe } from "vitest";
-import { createGrammar, Production } from "@/grammar";
+import { createGrammar } from "@/grammar";
 import { createInput, createStringInput } from "@/parser/input";
 import { LanguageParser } from "@/parser/language-parser";
-
-const nonTerminal = ["a", "b", "c", "d", "e", "f"] as const;
-
-const terminal = ["S", "R", "L"] as const;
-
-type Lab1Vocabulary = (typeof nonTerminal)[number] | (typeof terminal)[number];
-const productions: ReadonlyArray<Production<Lab1Vocabulary>> = [
-  {
-    from: "S",
-    to: ["a", "S"],
-  },
-  {
-    from: "S",
-    to: ["b", "S"],
-  },
-  {
-    from: "S",
-    to: ["c", "R"],
-  },
-  {
-    from: "R",
-    to: ["d", "L"],
-  },
-  {
-    from: "R",
-    to: ["e"],
-  },
-  {
-    from: "L",
-    to: ["f", "L"],
-  },
-  {
-    from: "L",
-    to: ["e", "L"],
-  },
-  {
-    from: "L",
-    to: ["d"],
-  },
-];
+import {
+  Lab1Vocabulary,
+  nonTerminal,
+  productions,
+  terminal,
+} from "fixtures/lab1-grammar";
 
 const grammar = createGrammar("S", productions, terminal, nonTerminal);
 const parser = new LanguageParser(grammar);

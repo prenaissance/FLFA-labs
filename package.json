@@ -7,16 +7,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc --build tsconfig.build.json",
+    "build": "rimraf dist && tsc --build tsconfig.build.json && resolve-tspaths -p tsconfig.build.json",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint --ext .ts,.tsx,.js,.jsx ."
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx .",
+    "demo:graph": "ts-node demo/serialize-to-dot.ts -r tsconfig-paths/register"
   },
   "keywords": [],
   "author": "prenaissance",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^18.14.1",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
     "eslint": "^8.34.0",
@@ -25,7 +27,10 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.4",
+    "resolve-tspaths": "^0.8.8",
     "rimraf": "^4.1.2",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.2",
     "typescript": "^4.9.5",
     "vite": "^4.1.1",
     "vite-tsconfig-paths": "^4.0.5",

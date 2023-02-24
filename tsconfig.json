@@ -20,16 +20,29 @@
         "paths": {
             "@/*": [
                 "src/*"
-            ]
+            ],
+            "@/fixtures/*": [
+                "fixtures/*"
+            ],
         },
     },
     "include": [
         "**/*.d.ts",
         "src",
         "vitest.config.js",
-        "tests"
+        "tests",
+        "fixtures",
+        "demo"
     ],
     "exclude": [
         "node_modules"
-    ]
+    ],
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        },
+        "require": [
+            "tsconfig-paths/register"
+        ]
+    }
 }
