@@ -7,7 +7,7 @@ export const terminal = ["S", "R", "L"] as const;
 export type Lab1Vocabulary =
   | (typeof nonTerminal)[number]
   | (typeof terminal)[number];
-export const productions: ReadonlyArray<RegularProduction<Lab1Vocabulary>> = [
+export const productions: ReadonlyArray<RegularProduction> = [
   {
     from: "S",
     to: ["a", "S"],

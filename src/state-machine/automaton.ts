@@ -44,9 +44,7 @@ export class Automaton {
     this._effects = [...new Set(transitions.map((t) => t.effect))];
   }
 
-  private transitionToProduction(
-    transition: Transition,
-  ): RegularProduction<string> {
+  private transitionToProduction(transition: Transition): RegularProduction {
     const isFinal = this._finalStates.includes(transition.to);
     if (isFinal) {
       return {
@@ -60,12 +58,12 @@ export class Automaton {
     };
   }
 
-  toGrammar(): RegularGrammar<string> {
-    const productions: RegularProduction<string>[] = this._transitions.reduce(
+  toGrammar(): RegularGrammar {
+    const productions: RegularProduction[] = this._transitions.reduce(
       (prods, transition) => {
         return [...prods, this.transitionToProduction(transition)];
       },
-      [] as RegularProduction<string>[],
+      [] as RegularProduction[],
     );
 
     return {

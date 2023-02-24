@@ -1,20 +1,20 @@
-export type RegularProduction<VocabularyT> = {
-  from: VocabularyT;
-  to: VocabularyT[];
+export type RegularProduction = {
+  from: string;
+  to: string[];
 };
-export interface RegularGrammar<VocabularyT> {
-  readonly start: VocabularyT;
-  readonly productions: ReadonlyArray<RegularProduction<VocabularyT>>;
-  readonly nonTerminal: ReadonlyArray<VocabularyT>;
-  readonly terminal: ReadonlyArray<VocabularyT>;
+export interface RegularGrammar {
+  readonly start: string;
+  readonly productions: ReadonlyArray<RegularProduction>;
+  readonly nonTerminal: ReadonlyArray<string>;
+  readonly terminal: ReadonlyArray<string>;
 }
 
-export function createRegularGrammar<VocabularyT>(
-  start: VocabularyT,
-  productions: ReadonlyArray<RegularProduction<VocabularyT>>,
-  nonTerminal: ReadonlyArray<VocabularyT>,
-  terminal: ReadonlyArray<VocabularyT>,
-): RegularGrammar<VocabularyT> {
+export function createRegularGrammar(
+  start: string,
+  productions: ReadonlyArray<RegularProduction>,
+  nonTerminal: ReadonlyArray<string>,
+  terminal: ReadonlyArray<string>,
+): RegularGrammar {
   return {
     start,
     productions,
