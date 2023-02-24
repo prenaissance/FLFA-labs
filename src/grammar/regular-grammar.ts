@@ -1,20 +1,20 @@
-export type Production<VocabularyT> = {
+export type RegularProduction<VocabularyT> = {
   from: VocabularyT;
   to: VocabularyT[];
 };
-export interface Grammar<VocabularyT> {
+export interface RegularGrammar<VocabularyT> {
   readonly start: VocabularyT;
-  readonly productions: ReadonlyArray<Production<VocabularyT>>;
+  readonly productions: ReadonlyArray<RegularProduction<VocabularyT>>;
   readonly nonTerminal: ReadonlyArray<VocabularyT>;
   readonly terminal: ReadonlyArray<VocabularyT>;
 }
 
-export function createGrammar<VocabularyT>(
+export function createRegularGrammar<VocabularyT>(
   start: VocabularyT,
-  productions: ReadonlyArray<Production<VocabularyT>>,
+  productions: ReadonlyArray<RegularProduction<VocabularyT>>,
   nonTerminal: ReadonlyArray<VocabularyT>,
   terminal: ReadonlyArray<VocabularyT>,
-): Grammar<VocabularyT> {
+): RegularGrammar<VocabularyT> {
   return {
     start,
     productions,

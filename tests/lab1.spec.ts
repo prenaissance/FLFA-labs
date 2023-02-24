@@ -1,6 +1,6 @@
 import { expect } from "vitest";
 import { it, describe } from "vitest";
-import { createGrammar } from "@/grammar";
+import { createRegularGrammar } from "@/grammar/regular-grammar";
 import { createInput, createStringInput } from "@/parser/input";
 import { LanguageParser } from "@/parser/language-parser";
 import {
@@ -10,7 +10,7 @@ import {
   terminal,
 } from "fixtures/lab1-grammar";
 
-const grammar = createGrammar("S", productions, terminal, nonTerminal);
+const grammar = createRegularGrammar("S", productions, terminal, nonTerminal);
 const parser = new LanguageParser(grammar);
 
 describe("lab1", () => {

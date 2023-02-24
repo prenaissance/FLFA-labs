@@ -1,10 +1,10 @@
-import { Grammar } from "@/grammar";
+import { RegularGrammar } from "@/grammar/regular-grammar";
 import { choice } from "@/common/utilities";
 import { ParsingError } from "./errors";
 import { createInput, Input } from "./input";
 
 export class LanguageParser<VocabularyT> {
-  constructor(private readonly _grammar: Grammar<VocabularyT>) {}
+  constructor(private readonly _grammar: RegularGrammar<VocabularyT>) {}
 
   isValid(
     input: Input<VocabularyT[]>,

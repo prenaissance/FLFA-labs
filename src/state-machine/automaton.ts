@@ -1,4 +1,4 @@
-import { Grammar, Production } from "@/grammar";
+import { RegularGrammar, RegularProduction } from "@/grammar/regular-grammar";
 
 export type Transition = {
   readonly from: string;
@@ -44,7 +44,9 @@ export class Automaton {
     this._effects = [...new Set(transitions.map((t) => t.effect))];
   }
 
-  private transitionToProduction(transition: Transition): Production<string> {
+  private transitionToProduction(
+    transition: Transition,
+  ): RegularProduction<string> {
     const isFinal = this._finalStates.includes(transition.to);
     if (isFinal) {
       return {
@@ -58,12 +60,12 @@ export class Automaton {
     };
   }
 
-  toGrammar(): Grammar<string> {
-    const productions: Production<string>[] = this._transitions.reduce(
+  toGrammar(): RegularGrammar<string> {
+    const productions: RegularProduction<string>[] = this._transitions.reduce(
       (prods, transition) => {
         return [...prods, this.transitionToProduction(transition)];
       },
-      [] as Production<string>[],
+      [] as RegularProduction<string>[],
     );
 
     return {

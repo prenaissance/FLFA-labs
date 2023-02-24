@@ -6,6 +6,7 @@ import {
   states,
   transitions,
 } from "fixtures/lab2-state-machine";
+import { Grammar } from "@/grammar/grammar";
 
 const automaton = new Automaton(initialState, states, transitions, finalStates);
 
@@ -71,6 +72,82 @@ describe("lab2", () => {
     it("should determine that the converted deterministic automaton is deterministic", () => {
       const deterministicAutomaton = automaton.toDeterministic();
       expect(deterministicAutomaton.isDeterministic()).toBe(true);
+    });
+  });
+
+  describe("grammar", () => {
+    it("should identify if left to right grammar is regular", () => {
+      const grammar = new Grammar(
+        "S",
+        [
+          { from: ["S"], to: ["a", "S"] },
+          { from: ["S"], to: ["b", "A"] },
+          { from: ["A"], to: ["a", "A"] },
+          { from: ["A"], to: ["b", "b"] },
+        ],
+        ["S", "A"],
+        ["a", "b"],
+      );
+      expect(grammar.getClassification()).toBe("regular");
+    });
+
+    it("should identify if right to left grammar is regular", () => {
+      const grammar = new Grammar(
+        "S",
+        [
+          { from: ["S"], to: ["S", "a"] },
+          { from: ["S"], to: ["A", "b"] },
+          { from: ["A"], to: ["A", "a"] },
+          { from: ["A"], to: ["b", "b"] },
+        ],
+        ["S", "A"],
+        ["a", "b"],
+      );
+      expect(grammar.getClassification()).toBe("regular");
+    });
+
+    it("should identify if grammar is context-free", () => {
+      const grammar = new Grammar(
+        "S",
+        [
+          { from: ["S"], to: ["X", "a"] },
+          { from: ["X"], to: ["a"] },
+          { from: ["X"], to: ["a", "X"] },
+          { from: ["X"], to: ["a", "b", "c"] },
+        ],
+        ["S", "X"],
+        ["a", "b", "c"],
+      );
+      expect(grammar.getClassification()).toBe("regular");
+    });
+
+    it("should identify if grammar is context-sensitive", () => {
+      const grammar = new Grammar(
+        "A",
+        [
+          { from: ["A", "B"], to: ["A", "b", "B", "c"] },
+          { from: ["A"], to: ["b", "c", "A"] },
+          { from: ["B"], to: ["c"] },
+        ],
+        ["A", "B"],
+        ["b", "c"],
+      );
+      expect(grammar.getClassification()).toBe("context-sensitive");
+    });
+
+    it("should identify if grammar is recursive", () => {
+      const grammar = new Grammar(
+        "S",
+        [
+          { from: ["S"], to: ["a", "c", "B"] },
+          { from: ["B", "c"], to: ["a", "c", "B"] },
+          { from: ["C", "B"], to: ["D", "B"] },
+          { from: ["a", "D"], to: ["D", "b"] },
+        ],
+        ["S", "B", "C", "D"],
+        ["a", "b", "c"],
+      );
+      expect(grammar.getClassification()).toBe("recursive");
     });
   });
 });
