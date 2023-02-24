@@ -3,13 +3,10 @@ import { choice } from "@/common/utilities";
 import { ParsingError } from "./errors";
 import { createInput, Input } from "./input";
 
-export class LanguageParser<VocabularyT> {
-  constructor(private readonly _grammar: RegularGrammar<VocabularyT>) {}
+export class LanguageParser {
+  constructor(private readonly _grammar: RegularGrammar) {}
 
-  isValid(
-    input: Input<VocabularyT[]>,
-    currentState: VocabularyT = this._grammar.start,
-  ): boolean {
+  isValid(input: Input, currentState = this._grammar.start): boolean {
     const { productions, terminal } = this._grammar;
     if (input.index === input.input.length) {
       return terminal.includes(currentState);
@@ -28,9 +25,7 @@ export class LanguageParser<VocabularyT> {
     return this.isValid(nextInput, production.to.at(-1));
   }
 
-  generateSentence(
-    existing: VocabularyT[] = [this._grammar.start],
-  ): VocabularyT[] {
+  generateSentence(existing: string[] = [this._grammar.start]): string[] {
     const { productions, terminal } = this._grammar;
     const head = existing.at(-1)!;
     if (terminal.includes(head)) {
