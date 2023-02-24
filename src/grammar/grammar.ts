@@ -32,20 +32,27 @@ export class Grammar {
   private isRegular(): boolean {
     const { nonTerminal, terminal } = this;
 
-    return this.productions.every(({ from, to }) => {
+    const isRegularLeftToRight = this.productions.every(({ from, to }) => {
       const isFromNonTerminal =
         from.length === 1 && nonTerminal.includes(from[0]);
       const isToRegularLeftToRight = to
         .slice(0, -1)
         .every((word) => terminal.includes(word));
+
+      return isFromNonTerminal && isToRegularLeftToRight;
+    });
+
+    const isRegularRightToLeft = this.productions.every(({ from, to }) => {
+      const isFromNonTerminal =
+        from.length === 1 && nonTerminal.includes(from[0]);
       const isToRegularRightToLeft = to
         .slice(1)
         .every((word) => terminal.includes(word));
 
-      return (
-        isFromNonTerminal && (isToRegularLeftToRight || isToRegularRightToLeft)
-      );
+      return isFromNonTerminal && isToRegularRightToLeft;
     });
+
+    return isRegularLeftToRight || isRegularRightToLeft;
   }
 
   private isContextFree(): boolean {

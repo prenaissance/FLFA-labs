@@ -73,6 +73,21 @@ describe("lab2", () => {
       const deterministicAutomaton = automaton.toDeterministic();
       expect(deterministicAutomaton.isDeterministic()).toBe(true);
     });
+
+    it("should serialize to dot notation", () => {
+      expect(automaton.serializeToDot("NFA")).toBe(
+        "digraph NFA {\n" +
+          '  "q0" -> "q1" [label = "a"]\n' +
+          '  "q1" -> "q1" [label = "b"]\n' +
+          '  "q1" -> "q2" [label = "a"]\n' +
+          '  "q2" -> "q2" [label = "b"]\n' +
+          '  "q2" -> "q3" [label = "b"]\n' +
+          '  "q3" -> "q4" [label = "b"]\n' +
+          '  "q3" -> "q1" [label = "a"]\n' +
+          '  "q4" [shape = doublecircle]\n' +
+          "}",
+      );
+    });
   });
 
   describe("grammar", () => {
@@ -118,7 +133,7 @@ describe("lab2", () => {
         ["S", "X"],
         ["a", "b", "c"],
       );
-      expect(grammar.getClassification()).toBe("regular");
+      expect(grammar.getClassification()).toBe("context-free");
     });
 
     it("should identify if grammar is context-sensitive", () => {
