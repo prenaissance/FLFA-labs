@@ -1,7 +1,7 @@
 import { RegularGrammar } from "@/grammar/regular-grammar";
 import { choice } from "@/common/utilities";
 import { ParsingError } from "./errors";
-import { createInput, Input } from "./input";
+import { createInput, Input } from "./language-input";
 
 export class LanguageParser {
   constructor(private readonly _grammar: RegularGrammar) {}
