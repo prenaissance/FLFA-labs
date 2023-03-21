@@ -14,6 +14,14 @@ describe("lab3 -> combinators", () => {
     expect(E.isLeft(result3)).toBe(true);
   });
 
+  it("should prioritize non-alt parser for `alt`", () => {
+    const parser = P.alt(P.char("a"))(P.str("ab"));
+
+    const result1 = P.run("abc")(parser);
+    expect(E.isRight(result1)).toBe(true);
+    expect(result1._tag === "Right" && result1.right.value).toBe("ab");
+  });
+
   it("should accept any input for `oneOf`", () => {
     const oneParser = P.map((c: string) => Number(c))(P.char("1"));
     const parser = P.oneOf(P.char("a"), P.char("b"), oneParser);
@@ -100,5 +108,34 @@ describe("lab3 -> combinators", () => {
       text: "bbb",
       index: 0,
     });
+  });
+
+  it("should parse correctly `sepBy` parsers", () => {
+    const parser = P.sepBy(P.between(P.whitespace, P.whitespace)(P.char(",")))(
+      P.char("a"),
+    );
+    const result1 = P.run("a, a , a,a")(parser);
+    expect(E.isRight(result1)).toBe(true);
+    expect(result1._tag === "Right" && result1.right.value).toEqual([
+      "a",
+      "a",
+      "a",
+      "a",
+    ]);
+
+    const result2 = P.run("")(parser);
+    expect(E.isRight(result2)).toBe(true);
+  });
+
+  it("should parse correctly `sepBy1` parsers", () => {
+    const parser = P.sepBy1(P.between(P.whitespace, P.whitespace)(P.char(",")))(
+      P.char("a"),
+    );
+    const result1 = P.run("a,  a")(parser);
+    expect(E.isRight(result1)).toBe(true);
+    expect(result1._tag === "Right" && result1.right.value).toEqual(["a", "a"]);
+
+    const result2 = P.run("")(parser);
+    expect(E.isLeft(result2)).toBe(true);
   });
 });

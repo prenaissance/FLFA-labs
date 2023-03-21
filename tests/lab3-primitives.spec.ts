@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as E from "fp-ts/Either";
 import * as P from "@/parser";
+import { flow, pipe } from "fp-ts/function";
 
 describe("lab3 -> primitives", () => {
   it("should parse single characters", () => {
@@ -49,7 +50,7 @@ describe("lab3 -> primitives", () => {
     ["b", false],
     ["", false],
   ])("should parse whitespace", (input, expected) => {
-    const parser = P.whitespace;
+    const parser = P.empty;
     const result = P.run(input)(parser);
     expect(E.isRight(result)).toBe(expected);
   });
@@ -69,5 +70,14 @@ describe("lab3 -> primitives", () => {
       text: "cad",
       index: 0,
     });
+  });
+
+  it("should parse leading whitespace", () => {
+    const parser = P.map<[any, string], string>(([_, cat]) => cat)(
+      P.sequence(P.whitespace, P.str("cat")),
+    );
+
+    const result = P.run("  \ncat")(parser);
+    expect(result._tag === "Right" && result.right.value).toBe("cat");
   });
 });

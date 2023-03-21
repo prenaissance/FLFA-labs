@@ -20,7 +20,7 @@ export const alt =
   <A1>(p1: Parser<A1>) =>
   <A2>(p2: Parser<A2>) =>
   (input: I.Input) =>
-    firstParserResultSemigroup<A1 | A2>().concat(p1(input), p2(input));
+    firstParserResultSemigroup<A1 | A2>().concat(p2(input), p1(input));
 
 export function oneOf<A1, A2>(p1: Parser<A1>, p2: Parser<A2>): Parser<A1 | A2>;
 export function oneOf<A1, A2, A3>(
@@ -95,7 +95,7 @@ export function sequence<A>(...parsers: Parser<A>[]): Parser<A[]> {
     pipe(
       parsers,
       RA.fromArray,
-      RA.reduce(success<A[]>([], input), (acc, parser) =>
+      RA.reduce(success<A[]>([])(input), (acc, parser) =>
         pipe(
           acc,
           E.chain((acc) =>
@@ -131,7 +131,7 @@ export const many: <A>(p: Parser<A>) => Parser<A[]> =
     pipe(
       p(input),
       E.fold(
-        () => success([], input),
+        () => success([])(input),
         (result) =>
           pipe(
             many(p)(result.nextInput),
@@ -150,3 +150,20 @@ export const many1: <A>(p: Parser<A>) => Parser<A[]> = <A>(p: Parser<A>) =>
       map((results) => [result, ...results]),
     ),
   )(p);
+
+export const sepBy1: (sep: Parser<any>) => <A>(p: Parser<A>) => Parser<A[]> =
+  (sep: Parser<any>) =>
+  <A>(p: Parser<A>) =>
+    chain<A, A[]>((result) =>
+      pipe(
+        p,
+        between(sep, success(null)),
+        many,
+        map((results) => [result, ...results]),
+      ),
+    )(p);
+
+export const sepBy: (sep: Parser<any>) => <A>(p: Parser<A>) => Parser<A[]> =
+  (sep: Parser<any>) =>
+  <A>(p: Parser<A>) =>
+    alt(success([]))(sepBy1(sep)(p));

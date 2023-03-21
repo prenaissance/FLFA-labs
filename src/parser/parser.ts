@@ -21,8 +21,10 @@ export const run =
   <A>(parser: Parser<A>) =>
     parser(I.of(text));
 
-export const success = <A>(value: A, nextInput: I.Input): ParserResult<A> =>
-  E.right({ value, nextInput });
+export const success =
+  <A>(value: A): Parser<A> =>
+  (nextInput) =>
+    E.right({ value, nextInput });
 
 export const error = <A = any>(
   input: I.Input,

@@ -4,7 +4,7 @@ import * as RA from "fp-ts/ReadonlyArray";
 import { pipe } from "fp-ts/function";
 import * as I from "./input";
 import { ParserError, ParserResult, success } from "./parser";
-import { oneOf } from "./combinators";
+import { many, oneOf } from "./combinators";
 
 export const char = (c: string) => (input: I.Input) =>
   pipe(
@@ -15,13 +15,21 @@ export const char = (c: string) => (input: I.Input) =>
   ) as ParserResult<string>;
 
 export const digit = oneOf(...pipe("01234567890".split(""), RA.map(char)));
-export const whitespace = oneOf(char(" "), char("\t"), char("\r"), char("\n"));
+export const alpha = oneOf(
+  ...pipe(
+    "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ".split(""),
+    RA.map(char),
+  ),
+);
+export const alphanum = oneOf(digit, alpha);
+export const empty = oneOf(char(" "), char("\t"), char("\r"), char("\n"));
+export const whitespace = many(empty);
 
 export const str = (s: string) => (input: I.Input) =>
   pipe(
     s.split(""),
     RA.map(char),
-    RA.reduce(success("", input), (acc, parser) =>
+    RA.reduce(success("")(input), (acc, parser) =>
       pipe(
         acc,
         E.chain((acc) =>
