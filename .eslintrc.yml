@@ -25,10 +25,10 @@ rules:
   "@typescript-eslint/no-non-null-assertion": "off"
   "@typescript-eslint/no-explicit-any": "off"
   "@typescript-eslint/no-unused-vars": 
-  - "warn"
-  - "argsIgnorePattern": "^_"
-  - "varsIgnorePattern": "^_"
-  - "caughtErrorsIgnorePattern": "^_"
+  - warn
+  - argsIgnorePattern: "^_"
+    varsIgnorePattern: "^_"
+    caughtErrorsIgnorePattern: "^_"
 settings:
   "import/parsers": 
     "@typescript-eslint/parser": [".ts", ".tsx"]

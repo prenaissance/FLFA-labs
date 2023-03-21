@@ -24,6 +24,10 @@ describe("lab3 -> combinators", () => {
     expect(E.isRight(result2)).toBe(true);
     const result3 = P.run("cde")(parser);
     expect(E.isLeft(result3)).toBe(true);
+    expect(result3._tag === "Left" && result3.left.input).toEqual({
+      text: "cde",
+      index: 0,
+    });
     const result4 = P.run("1de")(parser);
     expect(E.isRight(result4)).toBe(true);
   });
@@ -42,6 +46,10 @@ describe("lab3 -> combinators", () => {
     expect(E.isLeft(result2)).toBe(true);
     const result3 = P.run("ca")(catParser);
     expect(E.isLeft(result3)).toBe(true);
+    expect(result3._tag === "Left" && result3.left.input).toEqual({
+      text: "ca",
+      index: 0,
+    });
   });
 
   it("should parse correctly `between` parsers", () => {
@@ -51,5 +59,46 @@ describe("lab3 -> combinators", () => {
     expect(result1._tag === "Right" && result1.right.value).toBe("a");
     const result2 = P.run("[b]")(parser);
     expect(E.isLeft(result2)).toBe(true);
+  });
+
+  it("should parse correctly `many` parsers", () => {
+    const parser = P.many(P.char("a"));
+    const result1 = P.run("aaa")(parser);
+    expect(E.isRight(result1)).toBe(true);
+    expect(result1._tag === "Right" && result1.right.value).toEqual([
+      "a",
+      "a",
+      "a",
+    ]);
+
+    const result2 = P.run("bbb")(parser);
+    expect(E.isRight(result2)).toBe(true);
+    expect(result2._tag === "Right" && result2.right.value).toEqual([]);
+
+    const result3 = P.run("aab")(parser);
+    expect(E.isRight(result3)).toBe(true);
+    expect(result3._tag === "Right" && result3.right.value).toEqual(["a", "a"]);
+  });
+
+  it("should parse correctly `many1` parsers", () => {
+    const parser = P.many1(P.char("a"));
+    const result1 = P.run("aaa")(parser);
+    expect(E.isRight(result1)).toBe(true);
+    expect(result1._tag === "Right" && result1.right.value).toEqual([
+      "a",
+      "a",
+      "a",
+    ]);
+    expect(result1._tag === "Right" && result1.right.nextInput).toEqual({
+      text: "aaa",
+      index: 3,
+    });
+
+    const result2 = P.run("bbb")(parser);
+    expect(E.isLeft(result2)).toBe(true);
+    expect(result2._tag === "Left" && result2.left.input).toEqual({
+      text: "bbb",
+      index: 0,
+    });
   });
 });

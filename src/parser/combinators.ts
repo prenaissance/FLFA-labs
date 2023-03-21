@@ -9,6 +9,7 @@ import {
   ParserResult,
   ParserSuccess,
   absurd,
+  chain,
   map,
   success,
 } from "./parser";
@@ -48,6 +49,7 @@ export function oneOf<A1, A2, A3, A4, A5, A6>(
   p5: Parser<A5>,
   p6: Parser<A6>,
 ): Parser<A1 | A2 | A3 | A4 | A5 | A6>;
+export function oneOf<A>(...parsers: Parser<A>[]): Parser<A>;
 export function oneOf<A>(...parsers: Parser<A>[]): Parser<A> {
   return (input: I.Input) =>
     pipe(
@@ -107,6 +109,10 @@ export function sequence<A>(...parsers: Parser<A>[]): Parser<A[]> {
           ),
         ),
       ),
+      E.mapLeft(() => ({
+        input,
+        expected: ["sequence"],
+      })),
     );
 }
 
@@ -118,3 +124,29 @@ export const between =
         sequence(open, p, close),
       ),
     ) as Parser<A>;
+
+export const many: <A>(p: Parser<A>) => Parser<A[]> =
+  <A>(p: Parser<A>) =>
+  (input: I.Input) =>
+    pipe(
+      p(input),
+      E.fold(
+        () => success([], input),
+        (result) =>
+          pipe(
+            many(p)(result.nextInput),
+            E.map((success) => ({
+              value: [result.value, ...success.value],
+              nextInput: success.nextInput,
+            })),
+          ),
+      ),
+    ) as ParserResult<A[]>;
+
+export const many1: <A>(p: Parser<A>) => Parser<A[]> = <A>(p: Parser<A>) =>
+  chain<A, A[]>((result) =>
+    pipe(
+      many(p),
+      map((results) => [result, ...results]),
+    ),
+  )(p);
