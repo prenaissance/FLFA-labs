@@ -17,5 +17,5 @@ export const error = (input: Input) =>
 
 export const next = flow(
   O.fromPredicate((input: Input) => input.index < input.text.length),
-  O.map((input) => of(input.text, input.index + 1)),
+  O.map(({ text, index }) => [text[index], of(text, index + 1)] as const),
 );
