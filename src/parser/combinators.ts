@@ -1,9 +1,13 @@
 import * as E from "fp-ts/Either";
-import * as A from "fp-ts/Array";
+import * as RA from "fp-ts/ReadonlyArray";
 import * as S from "fp-ts/Semigroup";
 import { pipe } from "fp-ts/function";
 import * as I from "./input";
-import { Parser, ParserResult } from "./parser";
+import { Parser, ParserError, ParserResult, ParserSuccess, absurd } from "./parser";
+
+const firstParserResultSemigroup = <A>() => E.getSemigroup<ParserError, ParserSuccess<A>>(S.first())
+export const alt = <A1>(p1: Parser<A1>) => <A2>(p2: Parser<A2>) => (input: I.Input) => 
+  firstParserResultSemigroup<A1 | A2>().concat(p1(input), p2(input));
 
 export function oneOf<A1, A2>(p1: Parser<A1>, p2: Parser<A2>): Parser<A1 | A2>;
 export function oneOf<A1, A2, A3>(
@@ -36,7 +40,8 @@ export function oneOf<A>(...parsers: Parser<A>[]): Parser<A> {
   return (input: I.Input) =>
     pipe(
       parsers,
-      A.map((parser) => parser(input)),
-      S.concatAll(E.getSemigroup<ParserResult<A>>(S.first)),
+      RA.fromArray,
+      RA.map((parser) => parser(input)),
+      S.concatAll<ParserResult<A>>(E.getSemigroup(S.first()))(absurd(input))
     );
 }

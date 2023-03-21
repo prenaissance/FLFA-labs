@@ -1,6 +1,6 @@
 import * as E from "fp-ts/Either";
 import * as I from "./input";
-import { flow, pipe } from "fp-ts/function";
+import { flow } from "fp-ts/function";
 
 export type ParserSuccess<A> = {
   value: A;
@@ -24,10 +24,12 @@ export const run =
 export const success = <A>(value: A, nextInput: I.Input): ParserResult<A> =>
   E.right({ value, nextInput });
 
-export const error = (
+export const error = <A = any>(
   input: I.Input,
   expected: string[],
-): ParserResult<never> => E.left({ input, expected });
+): ParserResult<A> => E.left({ input, expected }) as ParserResult<A>;
+
+export const absurd = <A = any>(input: I.Input) => E.left({input, expected: ["never"]}) as ParserResult<A>;
 
 export const map =
   <A, B>(f: (a: A) => B) =>
