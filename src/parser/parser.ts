@@ -29,7 +29,8 @@ export const error = <A = any>(
   expected: string[],
 ): ParserResult<A> => E.left({ input, expected }) as ParserResult<A>;
 
-export const absurd = <A = any>(input: I.Input) => E.left({input, expected: ["never"]}) as ParserResult<A>;
+export const absurd = <A = any>(input: I.Input) =>
+  E.left({ input, expected: ["never"] }) as ParserResult<A>;
 
 export const map =
   <A, B>(f: (a: A) => B) =>
@@ -40,7 +41,7 @@ export const map =
         value: f(value),
         nextInput,
       })),
-    );
+    ) as Parser<B>;
 
 export const chain =
   <A, B>(f: (a: A) => Parser<B>) =>
