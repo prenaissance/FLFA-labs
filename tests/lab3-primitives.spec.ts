@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import * as E from "fp-ts/Either";
 import * as P from "@/parser";
-import { flow, pipe } from "fp-ts/function";
 
 describe("lab3 -> primitives", () => {
   it("should parse single characters", () => {

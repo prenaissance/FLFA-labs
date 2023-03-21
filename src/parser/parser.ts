@@ -34,16 +34,18 @@ export const error = <A = any>(
 export const absurd = <A = any>(input: I.Input) =>
   E.left({ input, expected: ["never"] }) as ParserResult<A>;
 
+export const mapResult = <A, B>(
+  f: (a: A) => B,
+): ((result: ParserResult<A>) => ParserResult<B>) =>
+  E.map(({ value, nextInput }) => ({
+    value: f(value),
+    nextInput,
+  }));
+
 export const map =
   <A, B>(f: (a: A) => B) =>
   (parser: Parser<A>) =>
-    flow(
-      parser,
-      E.map(({ value, nextInput }) => ({
-        value: f(value),
-        nextInput,
-      })),
-    ) as Parser<B>;
+    flow(parser, mapResult(f));
 
 export const chain =
   <A, B>(f: (a: A) => Parser<B>) =>

@@ -167,3 +167,7 @@ export const sepBy: (sep: Parser<any>) => <A>(p: Parser<A>) => Parser<A[]> =
   (sep: Parser<any>) =>
   <A>(p: Parser<A>) =>
     alt(success([]))(sepBy1(sep)(p));
+
+export const optional: <A>(p: Parser<A>) => Parser<A | ""> = <A>(
+  p: Parser<A>,
+) => alt(success("") as Parser<"">)(p);
