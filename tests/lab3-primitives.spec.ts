@@ -3,7 +3,7 @@ import * as E from "fp-ts/Either";
 import * as P from "@/parser";
 
 describe("lab3 -> primitives", () => {
-  it("should parser single characters", () => {
+  it("should parse single characters", () => {
     const parser = P.char("a");
     const result = P.run("abc")(parser);
     expect(result._tag === "Right" && result.right.value).toBe("a");
