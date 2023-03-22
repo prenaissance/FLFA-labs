@@ -131,9 +131,9 @@ describe("json parser", () => {
     null,
     1234.213,
     -23.1,
-    [1, 2, { a: 1, b: 2 }],
+    [1, 2, { a: 1, b: "14" }],
     { a: 1, b: 2 },
-    { a: 1, b: 2, c: [1, 2, 3] },
+    { a: 1, b: 2, c: [null, "12", 3] },
   ])("should parse %s as a valid json", (input) => {
     const result = P.run(JSON.stringify(input))(json);
     expect(E.isRight(result)).toBe(true);

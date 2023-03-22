@@ -1,5 +1,4 @@
 import * as RA from "fp-ts/ReadonlyArray";
-import * as E from "fp-ts/Either";
 import * as P from "../parser";
 import { flow, pipe } from "fp-ts/function";
 
