@@ -1,11 +1,9 @@
 import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as RA from "fp-ts/ReadonlyArray";
-import * as M from "fp-ts/Monoid";
-import * as St from "fp-ts/string";
 import { pipe } from "fp-ts/function";
 import * as I from "./input";
-import { ParserError, ParserResult, map, success } from "./parser";
+import { ParserError, ParserResult, map } from "./parser";
 import { between, many, oneOf, sequence } from "./combinators";
 
 export const char = (c: string) => (input: I.Input) =>
