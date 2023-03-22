@@ -48,7 +48,7 @@ export const mapResult = <A, B>(
 export const map =
   <A, B>(f: (a: A) => B) =>
   (parser: Parser<A>) =>
-    flow(parser, mapResult(f));
+    flow(parser, mapResult(f)) as Parser<B>;
 
 export const chain =
   <A, B>(f: (a: A) => Parser<B>) =>

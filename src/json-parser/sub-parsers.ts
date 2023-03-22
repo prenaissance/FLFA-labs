@@ -2,7 +2,7 @@ import * as RA from "fp-ts/ReadonlyArray";
 import * as P from "../parser";
 import { flow, pipe } from "fp-ts/function";
 
-export const number: P.Parser<number> = flow(
+export const number = pipe(
   P.sequence(
     P.optional(P.char("-")),
     P.oneOf(P.char("0"), P.many1(P.digit)),
@@ -15,23 +15,23 @@ export const number: P.Parser<number> = flow(
       ),
     ),
   ),
-  P.mapResult((arr) => arr.flat(3).join("")),
-  P.mapResult((s) => Number(s)),
+  P.map((arr) => arr.flat(3).join("")),
+  P.map((s) => Number(s)),
 );
 
-export const str: P.Parser<string> = flow(
+export const str = pipe(
   P.between(P.char('"'), P.char('"'))(P.many(P.except(P.char('"'))(P.anyChar))),
-  P.mapResult((arr) => arr.join("")),
+  P.map((arr) => arr.join("")),
 );
 
-export const bool: P.Parser<boolean> = flow(
+export const bool = pipe(
   P.oneOf(P.str("true"), P.str("false")),
-  P.mapResult((s) => s === "true"),
+  P.map((s) => s === "true"),
 );
 
-export const null_: P.Parser<null> = flow(
+export const null_ = pipe(
   P.str("null"),
-  P.mapResult(() => null),
+  P.map(() => null),
 );
 
 export const json = P.lazy(() =>
@@ -47,13 +47,13 @@ type JsonType =
 
 export const array: P.Parser<JsonType[]> = pipe(
   json,
-  P.sepBy(P.between(P.whitespace, P.whitespace)(P.char(","))),
+  P.sepBy(P.withSpacing(P.char(","))),
   P.between(P.char("["), P.char("]")),
 );
 
 export const object: P.Parser<Record<string, JsonType>> = pipe(
-  P.sequence(str, P.between(P.whitespace, P.whitespace)(P.char(":")), json),
-  P.sepBy(P.between(P.whitespace, P.whitespace)(P.char(","))),
+  P.sequence(str, P.withSpacing(P.char(":")), json),
+  P.sepBy(P.withSpacing(P.char(","))),
   P.between(P.char("{"), P.char("}")),
   P.map(RA.map(([k, _, v]) => [k, v] as const)),
   P.map(Object.fromEntries),

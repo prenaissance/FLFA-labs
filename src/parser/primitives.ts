@@ -4,7 +4,7 @@ import * as RA from "fp-ts/ReadonlyArray";
 import { pipe } from "fp-ts/function";
 import * as I from "./input";
 import { ParserError, ParserResult, success } from "./parser";
-import { many, oneOf } from "./combinators";
+import { between, many, oneOf } from "./combinators";
 
 export const char = (c: string) => (input: I.Input) =>
   pipe(
@@ -32,6 +32,7 @@ export const alpha = oneOf(
 export const alphanum = oneOf(digit, alpha);
 export const empty = oneOf(char(" "), char("\t"), char("\r"), char("\n"));
 export const whitespace = many(empty);
+export const withSpacing = between(whitespace, whitespace);
 
 export const str = (s: string) => (input: I.Input) =>
   pipe(
