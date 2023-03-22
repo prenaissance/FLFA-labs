@@ -186,3 +186,8 @@ export const except: (
         () => error(input, ["except"]),
       ),
     );
+
+export const lazy: <A>(p: () => Parser<A>) => Parser<A> =
+  <A>(p: () => Parser<A>) =>
+  (input: I.Input) =>
+    p()(input);
