@@ -79,4 +79,14 @@ describe("lab3 -> primitives", () => {
     const result = P.run("  \ncat")(parser);
     expect(result._tag === "Right" && result.right.value).toBe("cat");
   });
+
+  it("should parse any character", () => {
+    const parser = P.anyChar;
+    const result = P.run("abc")(parser);
+    expect(result._tag === "Right" && result.right.value).toBe("a");
+    expect(result._tag === "Right" && result.right.nextInput).toEqual({
+      text: "abc",
+      index: 1,
+    });
+  });
 });

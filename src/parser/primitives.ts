@@ -14,6 +14,14 @@ export const char = (c: string) => (input: I.Input) =>
     E.map(([chr, nextInput]) => ({ value: chr, nextInput })),
   ) as ParserResult<string>;
 
+// always succeeds and consumes 1 character (unless EOF)
+export const anyChar = (input: I.Input) =>
+  pipe(
+    I.next(input),
+    E.fromOption<ParserError>(() => ({ input, expected: ["any character"] })),
+    E.map(([chr, nextInput]) => ({ value: chr, nextInput })),
+  );
+
 export const digit = oneOf(...pipe("01234567890".split(""), RA.map(char)));
 export const alpha = oneOf(
   ...pipe(

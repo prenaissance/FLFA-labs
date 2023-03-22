@@ -1,6 +1,6 @@
 import * as O from "fp-ts/Option";
 import { ParsingError } from "@/language-parser/errors";
-import { flow, pipe } from "fp-ts/function";
+import { flow } from "fp-ts/function";
 
 export interface Input {
   readonly text: string;

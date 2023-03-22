@@ -16,11 +16,14 @@ export type ParserResult<A> = E.Either<ParserError, ParserSuccess<A>>;
 
 export type Parser<A> = (input: I.Input) => ParserResult<A>;
 
+export type inferParserType<T> = T extends Parser<infer A> ? A : never;
+
 export const run =
   (text: string) =>
   <A>(parser: Parser<A>) =>
     parser(I.of(text));
 
+// always succeeds without consuming any input
 export const success =
   <A>(value: A): Parser<A> =>
   (nextInput) =>

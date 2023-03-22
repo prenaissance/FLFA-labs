@@ -10,6 +10,7 @@ import {
   ParserSuccess,
   absurd,
   chain,
+  error,
   map,
   success,
 } from "./parser";
@@ -171,3 +172,17 @@ export const sepBy: (sep: Parser<any>) => <A>(p: Parser<A>) => Parser<A[]> =
 export const optional: <A>(p: Parser<A>) => Parser<A | ""> = <A>(
   p: Parser<A>,
 ) => alt(success("") as Parser<"">)(p);
+
+export const except: (
+  exception: Parser<any>,
+) => <A>(p: Parser<A>) => Parser<A> =
+  (exception: Parser<any>) =>
+  <A>(p: Parser<A>) =>
+  (input: I.Input) =>
+    pipe(
+      exception(input),
+      E.fold(
+        () => p(input),
+        () => error(input, ["except"]),
+      ),
+    );

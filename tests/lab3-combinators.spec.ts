@@ -138,4 +138,23 @@ describe("lab3 -> combinators", () => {
     const result2 = P.run("")(parser);
     expect(E.isLeft(result2)).toBe(true);
   });
+
+  it("should any character except the `except` parser", () => {
+    const parser = P.except(P.char("a"))(P.alpha);
+    const result1 = P.run("a")(parser);
+    expect(E.isLeft(result1)).toBe(true);
+    const result2 = P.run("b")(parser);
+    expect(E.isRight(result2)).toBe(true);
+  });
+
+  it("should parse every character until the `except` parser", () => {
+    const parser = P.many(P.except(P.char("a"))(P.alpha));
+    const result1 = P.run("bba")(parser);
+    expect(E.isRight(result1)).toBe(true);
+    expect(result1._tag === "Right" && result1.right.value).toEqual(["b", "b"]);
+
+    const result2 = P.run("a")(parser);
+    expect(E.isRight(result2)).toBe(true);
+    expect(result2._tag === "Right" && result2.right.value).toEqual([]);
+  });
 });
