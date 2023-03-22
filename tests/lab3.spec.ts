@@ -2,6 +2,14 @@ import { describe, it, expect } from "vitest";
 import * as P from "@/parser";
 import * as E from "fp-ts/Either";
 import {
+  arrayString,
+  arrayTokens,
+  objectString,
+  objectTokens,
+  kitchenSinkString,
+  kitchenSinkTokens,
+} from "@/fixtures/lab3-tokens";
+import {
   array,
   bool,
   json,
@@ -9,6 +17,8 @@ import {
   object,
   str,
 } from "@/json-parser/sub-parsers";
+
+import { lex } from "@/json-parser/lexer";
 
 describe("json parser", () => {
   it.each(["0.123", "14", "12e-3", "13.2e9", "0"])(
@@ -138,5 +148,25 @@ describe("json parser", () => {
     const result = P.run(JSON.stringify(input))(json);
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual(input);
+  });
+
+  it.each([
+    {
+      input: arrayString,
+      expected: arrayTokens,
+    },
+    {
+      input: objectString,
+      expected: objectTokens,
+    },
+    {
+      input: kitchenSinkString,
+      expected: kitchenSinkTokens,
+    },
+  ])("should lex json", ({ input, expected }) => {
+    const result = P.run(input)(lex);
+
+    expect(E.isRight(result)).toBe(true);
+    expect(result._tag === "Right" && result.right.value).toEqual(expected);
   });
 });

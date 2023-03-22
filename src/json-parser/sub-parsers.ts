@@ -1,6 +1,6 @@
 import * as RA from "fp-ts/ReadonlyArray";
 import * as P from "../parser";
-import { flow, pipe } from "fp-ts/function";
+import { pipe } from "fp-ts/function";
 
 export const number = pipe(
   P.sequence(
