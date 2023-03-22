@@ -17,7 +17,9 @@ import {
 
 const firstParserResultSemigroup = <A>() =>
   E.getSemigroup<ParserError, ParserSuccess<A>>(S.first());
-export const alt =
+export const alt: <A1>(
+  p1: Parser<A1>,
+) => <A2>(p2: Parser<A2>) => Parser<A1 | A2> =
   <A1>(p1: Parser<A1>) =>
   <A2>(p2: Parser<A2>) =>
   (input: I.Input) =>
@@ -91,6 +93,7 @@ export function sequence<A1, A2, A3, A4, A5, A6>(
   p5: Parser<A5>,
   p6: Parser<A6>,
 ): Parser<[A1, A2, A3, A4, A5, A6]>;
+export function sequence<A>(...parsers: Parser<A>[]): Parser<A[]>;
 export function sequence<A>(...parsers: Parser<A>[]): Parser<A[]> {
   return (input: I.Input) =>
     pipe(

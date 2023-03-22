@@ -21,7 +21,7 @@ import {
 import { lex } from "@/json-parser/lexer";
 
 describe("json parser", () => {
-  it.each(["0.123", "14", "12e-3", "13.2e9", "0"])(
+  it.each(["0.123", "-14", "12e-3", "13.2e+9", "0"])(
     `should parse number %s`,
     (input) => {
       const result = P.run(input)(number);
@@ -31,7 +31,7 @@ describe("json parser", () => {
     },
   );
 
-  it.each(["00", ".1", "1.", "2e"])(
+  it.each(["00", ".1", "1.", "2e", "01.12"])(
     `should fail to parse number %s`,
     (input) => {
       const result = P.run(input)(number);

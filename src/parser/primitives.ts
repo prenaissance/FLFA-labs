@@ -1,10 +1,12 @@
 import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as RA from "fp-ts/ReadonlyArray";
+import * as M from "fp-ts/Monoid";
+import * as St from "fp-ts/string";
 import { pipe } from "fp-ts/function";
 import * as I from "./input";
-import { ParserError, ParserResult, success } from "./parser";
-import { between, many, oneOf } from "./combinators";
+import { ParserError, ParserResult, map, success } from "./parser";
+import { between, many, oneOf, sequence } from "./combinators";
 
 export const char = (c: string) => (input: I.Input) =>
   pipe(
@@ -34,26 +36,10 @@ export const empty = oneOf(char(" "), char("\t"), char("\r"), char("\n"));
 export const whitespace = many(empty);
 export const withSpacing = between(whitespace, whitespace);
 
-export const str = (s: string) => (input: I.Input) =>
+export const str = (s: string) =>
   pipe(
     s.split(""),
     RA.map(char),
-    RA.reduce(success("")(input), (acc, parser) =>
-      pipe(
-        acc,
-        E.chain((acc) =>
-          pipe(
-            parser(acc.nextInput),
-            E.map((success) => ({
-              value: acc.value + success.value,
-              nextInput: success.nextInput,
-            })),
-          ),
-        ),
-        E.mapLeft(() => ({
-          input,
-          expected: [s],
-        })),
-      ),
-    ),
-  ) as ParserResult<string>;
+    (arr) => sequence(...arr),
+    map(RA.reduce("", (acc, curr) => acc + curr)),
+  );

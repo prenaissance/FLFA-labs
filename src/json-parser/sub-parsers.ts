@@ -10,7 +10,7 @@ export const number = pipe(
     P.optional(
       P.sequence(
         P.oneOf(P.char("e"), P.char("E")),
-        P.optional(P.char("-")),
+        P.optional(P.oneOf(P.char("+"), P.char("-"))),
         P.many1(P.digit),
       ),
     ),
