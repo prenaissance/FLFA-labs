@@ -45,7 +45,7 @@ I added the [fp-ts](https://gcanti.github.io/fp-ts/) library starting with this 
 
 ### Topic
 
-I chose to implement a lexer (and also a parser) for JSON, which is the most used data interchange format for web applications. The specification for JSON can be found [here](https://www.json.org/json-en.html). The string escape characters probably work, other than that it fully supports the specification. Disclaimer - I will implement the lexer with parsers.
+I chose to implement a lexer (and also a parser) for JSON, which is the most used data interchange format for web applications. The specification for JSON can be found [here](https://www.json.org/json-en.html). The result parser fully supports the specification. Disclaimer - I will implement the lexer with parsers.
 
 To make the laboratory work a bit harder I decided not to use the power of RegEx, but to implement these needs with parser combinators.
 
@@ -125,7 +125,7 @@ export const char = (c: string) => (input: I.Input) =>
   ) as ParserResult<string>;
 ```
 
-Believe it or not, these are the construct on which the rest of the parsing is built upon. I will skip some of the upcoming implementations and show the signatures/ uses only.
+Believe it or not, these are the construct on which the rest of the parsing is built upon.
 
 ### Combinators
 
@@ -252,7 +252,7 @@ export const number = pipe(
 );
 ```
 
-Without using regular expressions, it would probably be a pain to write the equivalent of the above parser. And since monadic parsers are so declarative, the code can be read as a specification of the grammar.
+Without using regular expressions, it would probably be a pain to write the equivalent of the above parser in an imperative style. And since monadic parsers are so declarative, the code can be read as a specification of the grammar.
 
 The rest of the steps to make a full json parser require some recursive parsing, which is surprisingly also easy to write. There's the rest of the code:
 
@@ -265,6 +265,10 @@ type JsonType =
   | null
   | JsonType[]
   | Record<string, any>;
+
+export const json = P.lazy(() =>
+  P.oneOf(number, str, bool, null_, array, object),
+);
 
 export const array: P.Parser<JsonType[]> = pipe(
   json,
@@ -279,17 +283,13 @@ export const object: P.Parser<Record<string, JsonType>> = pipe(
   P.map(RA.map(([k, _, v]) => [k, v] as const)),
   P.map(Object.fromEntries),
 );
-
-export const json = P.lazy(() =>
-  P.oneOf(number, str, bool, null_, array, object),
-);
 ```
 
-That's it. The final parser complies to the JSON specification and it's a scanner-less parser. Notice that nowhere in the process were tokens created, primitive parsers are the substitute for tokens. This, however, does not meet the objectives of the laboratories, so some the primitives defined above will be reused to make a redundant lexer.
+That's it. The final parser complies to the JSON specification and it's a scanner-less parser. Notice that nowhere in the process were tokens created, primitive parsers are the substitute for tokens. This, however, does not meet the objectives of the laboratory work, so some the primitives defined above will be reused to make a redundant lexer.
 
 ### Lexer implementation
 
-As stated, the lexemes are the outputs of the primitives parsers defined above. The lexer will map the lexemes into a bit more meaningful form.
+As stated, the lexemes are the outputs of the primitive parsers defined above. The lexer will map the lexemes into a bit of a more meaningful form.
 
 ```ts
 // src/json-parser/lexer.ts
@@ -360,7 +360,7 @@ const lexSymbol = P.oneOf(
 );
 ```
 
-These are the parsers for all the needed tokens. The lexer will scan the input for these tokens until it reaches the end of the input, ignoring spaces between lexemes:
+These are the parsers for all the needed tokens. The lexer will scan the input for the tokens until it reaches the end of the input, ignoring spaces between lexemes:
 
 ```ts
 // src/json-parser/lexer.ts
@@ -391,7 +391,7 @@ Output:
 
 ## References
 
-1. (Fantasy Land)[https://github.com/fantasyland/fantasy-land] - A specification for interoperability of common algebraic structures in JavaScript.
-2. (Cookielab article)[https://www.cookielab.io/blog/how-to-write-your-own-json-parser-using-functional-typescript-fp-ts-part-i] - unfinished article that inspired me to do this.
-3. (dev.to)[https://dev.to/gcanti/getting-started-with-fp-ts-setoid-39f3] - series of articles on algebraic structures in fp-ts.
-4. (youtube playlist)(https://www.youtube.com/watch?v=6oQLRhw5Ah0&list=PLP29wDx6QmW5yfO1LAgO8kU3aQEj8SIrU) - playlist on parser combinators in javascript
+1. [Fantasy Land](https://github.com/fantasyland/fantasy-land) - A specification for interoperability of common algebraic structures in JavaScript.
+2. [Cookielab article](https://www.cookielab.io/blog/how-to-write-your-own-json-parser-using-functional-typescript-fp-ts-part-i) - unfinished article that inspired me to do this.
+3. [dev.to](https://dev.to/gcanti/getting-started-with-fp-ts-setoid-39f3) - series of articles on algebraic structures in fp-ts.
+4. [youtube playlist](https://www.youtube.com/watch?v=6oQLRhw5Ah0&list=PLP29wDx6QmW5yfO1LAgO8kU3aQEj8SIrU) - playlist on parser combinators in javascript
