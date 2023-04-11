@@ -110,17 +110,36 @@ export class Grammar {
     if (nullProduction === undefined) {
       return this.clone();
     }
+    const [nullProductionSymbol] = nullProduction.from;
+    const nonTerminalProductions = productions.filter(
+      (p) => p !== nullProduction,
+    );
+    const hasAlternateProductions = nonTerminalProductions.some(
+      ({ from }) => from[0] === nullProductionSymbol,
+    );
+
+    if (!hasAlternateProductions) {
+      const newProductions = nonTerminalProductions.map(({ from, to }) => ({
+        from,
+        to: to.filter((word) => word !== nullProductionSymbol),
+      }));
+
+      return new Grammar(
+        start,
+        newProductions,
+        nonTerminal.filter((n) => n !== nullProductionSymbol),
+        terminal,
+      ).withoutNullProductions();
+    }
     // context free grammars (CNF reducible) won't have >= 1 left side symbols
     // so I'll only replace the first symbol in the right side for one null production
     // and recurse
     const combinationsWithoutNullElement = combinationsWithout(
       nullProduction.from[0],
     );
-    const newProductions = productions
-      .filter((p) => p !== nullProduction)
-      .flatMap(({ from, to }) =>
-        combinationsWithoutNullElement(to).map((to) => ({ from, to })),
-      );
+    const newProductions = nonTerminalProductions.flatMap(({ from, to }) =>
+      combinationsWithoutNullElement(to).map((to) => ({ from, to })),
+    );
 
     return new Grammar(
       start,
