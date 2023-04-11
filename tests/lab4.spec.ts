@@ -56,4 +56,9 @@ describe("lab4", () => {
     const grammarWithoutRighthandStart = grammar.withoutRighthandStart();
     expect(grammarWithoutRighthandStart).toEqual(grammar);
   });
+
+  it("should remove null productions", () => {
+    const grammar = v2Grammar.withoutNullProductions();
+    console.log(JSON.stringify(grammar, null, 2));
+  });
 });
