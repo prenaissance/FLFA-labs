@@ -11,6 +11,16 @@ export class Grammar {
     readonly terminal: string[],
   ) {}
 
+  clone(): Grammar {
+    const { start, productions, nonTerminal, terminal } = this;
+    return new Grammar(
+      start,
+      productions.map((p) => ({ ...p })),
+      [...nonTerminal],
+      [...terminal],
+    );
+  }
+
   getClassification():
     | "regular"
     | "context-free"
@@ -68,5 +78,26 @@ export class Grammar {
     return this.productions
       .flatMap(({ from }) => from)
       .every((word) => nonTerminal.includes(word));
+  }
+
+  withoutRighthandStart(): Grammar {
+    const { start, productions, nonTerminal, terminal } = this;
+
+    const hasRighthandStart = productions.some(({ to }) => to.includes(start));
+
+    return hasRighthandStart
+      ? new Grammar(
+          `${start}'`,
+          [
+            ...productions,
+            {
+              from: [`${start}`],
+              to: [start],
+            },
+          ],
+          [...nonTerminal, `${start}'`],
+          terminal,
+        )
+      : this.clone();
   }
 }
