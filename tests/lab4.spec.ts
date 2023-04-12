@@ -192,4 +192,29 @@ describe("lab4", () => {
 
     expect(grammarWithoutUnitProductions).toEqual(expected);
   });
+
+  it("should remove unreachable productions", () => {
+    const grammar = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["a", "B"] },
+        { from: ["C"], to: ["e", "D"] },
+        { from: ["D"], to: ["f"] },
+      ],
+      ["S", "B", "C", "D"],
+      ["a", "e", "f"],
+    );
+
+    const grammarWithoutUnreachableProductions =
+      grammar.withoutUnreachableProductions();
+
+    const expected = new Grammar(
+      "S",
+      [{ from: ["S"], to: ["a", "B"] }],
+      ["S", "B"],
+      ["a"],
+    );
+
+    expect(grammarWithoutUnreachableProductions).toEqual(expected);
+  });
 });

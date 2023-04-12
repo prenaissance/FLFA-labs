@@ -191,4 +191,40 @@ export class Grammar {
 
     return new Grammar(start, guf, nonTerminal, terminal);
   }
+
+  withoutUnreachableProductions(): Grammar {
+    const { start, productions, nonTerminal, terminal } = this;
+
+    const reachableNonTerminals = [
+      start,
+      ...new Set(
+        productions.flatMap(({ to }) =>
+          to.filter((word) => nonTerminal.includes(word)),
+        ),
+      ),
+    ];
+    if (reachableNonTerminals.length === nonTerminal.length) {
+      return this.clone();
+    }
+    const reachableProductions = productions.filter(({ from }) =>
+      reachableNonTerminals.includes(from[0]),
+    );
+    const reachableTerminals = [
+      ...new Set(
+        reachableProductions.flatMap(({ to }) =>
+          to.filter((word) => terminal.includes(word)),
+        ),
+      ),
+    ];
+    return new Grammar(
+      start,
+      reachableProductions,
+      reachableNonTerminals,
+      reachableTerminals,
+    ).withoutUnreachableProductions();
+  }
+
+  // withoutNonGeneratingProductions(): Grammar {
+  //   const { start, productions, nonTerminal, terminal } = this;
+  // }
 }
