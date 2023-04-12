@@ -245,4 +245,33 @@ describe("lab4", () => {
 
     expect(grammarWithoutNonGeneratingProductions).toEqual(expected);
   });
+
+  it("should simplify productions with longer than 2 right hand side", () => {
+    const grammar = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["A", "S", "A"] },
+        { from: ["A"], to: ["a"] },
+        { from: ["A"], to: ["A", "S", "A"] },
+      ],
+      ["S", "A"],
+      ["a"],
+    );
+
+    const grammarWithoutLongProductions = grammar.withoutLongProductions();
+
+    const expected = new Grammar(
+      "S",
+      [
+        { from: ["B"], to: ["S", "A"] },
+        { from: ["S"], to: ["A", "B"] },
+        { from: ["A"], to: ["a"] },
+        { from: ["A"], to: ["A", "B"] },
+      ],
+      ["S", "A", "B"],
+      ["a"],
+    );
+
+    expect(grammarWithoutLongProductions).toEqual(expected);
+  });
 });

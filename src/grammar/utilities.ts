@@ -35,3 +35,14 @@ export const combinationsWithout =
       return combinations.findIndex((c2) => areArraysEqual(c, c2)) === i;
     });
   };
+
+const capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+export const getAvailableLetter = (
+  used: string[],
+  letters = capitalLetters,
+): string =>
+  letters.find((l) => !used.includes(l)) ??
+  getAvailableLetter(
+    used,
+    letters.map((l) => `${l}'`),
+  );

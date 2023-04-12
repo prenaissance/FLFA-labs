@@ -1,4 +1,8 @@
-import { areArraysEqual, combinationsWithout } from "./utilities";
+import {
+  areArraysEqual,
+  combinationsWithout,
+  getAvailableLetter,
+} from "./utilities";
 
 export type Production = {
   from: string[];
@@ -277,5 +281,42 @@ export class Grammar {
 
   withoutUselessProductions(): Grammar {
     return this.withoutNonGeneratingProductions().withoutUnreachableProductions();
+  }
+
+  withoutLongProductions(): Grammar {
+    const { start, productions, nonTerminal, terminal } = this;
+    const firstLongestProduction = productions.reduce(
+      (max, prod) => (prod.to.length > max.to.length ? prod : max),
+      productions[0],
+    );
+
+    if (firstLongestProduction.to.length <= 2) {
+      return this.clone();
+    }
+
+    const replacementSymbol = getAvailableLetter(nonTerminal);
+    const replacedSequence = firstLongestProduction.to.slice(1);
+    const newNonTerminal = [...nonTerminal, replacementSymbol];
+    const newProductions = [
+      {
+        from: [replacementSymbol],
+        to: replacedSequence,
+      },
+      ...productions.map(({ from, to }) =>
+        areArraysEqual(to.slice(1), replacedSequence)
+          ? {
+              from,
+              to: [to[0], replacementSymbol],
+            }
+          : { from, to },
+      ),
+    ];
+
+    return new Grammar(
+      start,
+      newProductions,
+      newNonTerminal,
+      terminal,
+    ).withoutLongProductions();
   }
 }

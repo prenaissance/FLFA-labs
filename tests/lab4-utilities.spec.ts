@@ -1,6 +1,7 @@
 import {
   areArraysEqual,
   combinationsWithout,
+  getAvailableLetter,
   getCombinations,
 } from "@/grammar/utilities";
 import { describe, it, expect } from "vitest";
@@ -53,5 +54,17 @@ describe("lab4 utilities", () => {
     ];
 
     expect(combinationsWithoutB(arr)).toEqual(expected);
+  });
+
+  it("should find the first capital letter that is not already used", () => {
+    const nonTerminals = ["S", "A", "B"];
+    const nonTerminals2 = ["S", "A", "B", "C", "D", "E", "F", "G", "H", "I"];
+    expect(getAvailableLetter(nonTerminals)).toBe("C");
+    expect(getAvailableLetter(nonTerminals2)).toBe("J");
+  });
+
+  it("should add ' to a capital letter if all the alphabet is used", () => {
+    const nonTerminals = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    expect(getAvailableLetter(nonTerminals)).toBe("A'");
   });
 });
