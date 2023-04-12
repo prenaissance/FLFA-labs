@@ -224,7 +224,58 @@ export class Grammar {
     ).withoutUnreachableProductions();
   }
 
-  // withoutNonGeneratingProductions(): Grammar {
-  //   const { start, productions, nonTerminal, terminal } = this;
-  // }
+  withoutNonGeneratingProductions(): Grammar {
+    const { start, productions, terminal, nonTerminal } = this;
+
+    // start with non-transitive generating productions
+    const generatingNonTerminalsSet = new Set(
+      productions
+        .filter(({ to }) => to.every((word) => terminal.includes(word)))
+        .flatMap(({ from }) => from),
+    );
+    generatingNonTerminalsSet;
+
+    let foundNewNonTerminals = true;
+    while (foundNewNonTerminals) {
+      foundNewNonTerminals = false;
+      productions.forEach(({ from, to }) => {
+        if (generatingNonTerminalsSet.has(from[0])) {
+          return;
+        }
+        if (
+          to.every(
+            (word) =>
+              terminal.includes(word) || generatingNonTerminalsSet.has(word),
+          )
+        ) {
+          foundNewNonTerminals = true;
+          generatingNonTerminalsSet.add(from[0]);
+        }
+      });
+    }
+
+    const newProductions = productions.filter(({ to }) =>
+      to.every(
+        (word) =>
+          terminal.includes(word) || generatingNonTerminalsSet.has(word),
+      ),
+    );
+    const newTerminals = [
+      ...new Set(
+        newProductions.flatMap(({ to }) =>
+          to.filter((word) => terminal.includes(word)),
+        ),
+      ),
+    ];
+    return new Grammar(
+      start,
+      newProductions,
+      [...generatingNonTerminalsSet],
+      newTerminals,
+    );
+  }
+
+  withoutUselessProductions(): Grammar {
+    return this.withoutNonGeneratingProductions().withoutUnreachableProductions();
+  }
 }

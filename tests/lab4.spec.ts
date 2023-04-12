@@ -217,4 +217,32 @@ describe("lab4", () => {
 
     expect(grammarWithoutUnreachableProductions).toEqual(expected);
   });
+
+  it("should remove non generating productions", () => {
+    const grammar = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["a", "B"] },
+        { from: ["B"], to: ["e", "D"] },
+        { from: ["B"], to: ["f"] },
+      ],
+      ["S", "B", "C", "D"],
+      ["a", "e", "f"],
+    );
+
+    const grammarWithoutNonGeneratingProductions =
+      grammar.withoutNonGeneratingProductions();
+
+    const expected = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["a", "B"] },
+        { from: ["B"], to: ["f"] },
+      ],
+      ["B", "S"],
+      ["a", "f"],
+    );
+
+    expect(grammarWithoutNonGeneratingProductions).toEqual(expected);
+  });
 });
