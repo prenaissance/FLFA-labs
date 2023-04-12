@@ -1,9 +1,21 @@
-import { combinationsWithout } from "./utilities";
+import { areArraysEqual, combinationsWithout } from "./utilities";
 
 export type Production = {
   from: string[];
   to: string[];
 };
+
+export const getUniqueProductions = (productions: Production[]) => [
+  ...productions
+    .reduce((map, production) => {
+      const key = `${production.from.join("")} -> ${production.to.join("")}`;
+      if (map.has(key)) {
+        return map;
+      }
+      return map.set(key, production);
+    }, new Map<string, Production>())
+    .values(),
+];
 
 export class Grammar {
   constructor(
@@ -147,5 +159,36 @@ export class Grammar {
       nonTerminal,
       terminal,
     ).withoutNullProductions();
+  }
+
+  withoutUnitProductions(): Grammar {
+    const { start, productions, nonTerminal, terminal } = this;
+
+    // 'from' length === 1 for context free
+    const unitProductions = productions.filter(
+      ({ to }) => to.length === 1 && nonTerminal.includes(to[0]),
+    );
+    if (unitProductions.length === 0) {
+      return this.clone();
+    }
+
+    // initialize with the non unit productions
+    let guf = productions.filter((p) => !unitProductions.includes(p));
+
+    // for each unit production
+    unitProductions.forEach(({ from, to }) => {
+      const transitiveProductionResults = guf
+        .filter(({ from: f }) => areArraysEqual(f, to))
+        .map((production) => production.to);
+
+      // for each transitive production result add transitive production to guf
+      transitiveProductionResults.forEach((to) => {
+        guf.push({ from, to });
+      });
+
+      guf = getUniqueProductions(guf);
+    });
+
+    return new Grammar(start, guf, nonTerminal, terminal);
   }
 }

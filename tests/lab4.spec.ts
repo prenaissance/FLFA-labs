@@ -162,4 +162,34 @@ describe("lab4", () => {
 
     expect(grammarWithoutNullProductions).toEqual(expected);
   });
+
+  it("should remove unit productions", () => {
+    const grammar = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["a", "B"] },
+        { from: ["B"], to: ["b"] },
+        { from: ["S"], to: ["b", "A"] },
+        { from: ["A"], to: ["B"] },
+      ],
+      ["S", "A", "B"],
+      ["a", "b"],
+    );
+
+    const grammarWithoutUnitProductions = grammar.withoutUnitProductions();
+
+    const expected = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["a", "B"] },
+        { from: ["B"], to: ["b"] },
+        { from: ["S"], to: ["b", "A"] },
+        { from: ["A"], to: ["b"] },
+      ],
+      ["S", "A", "B"],
+      ["a", "b"],
+    );
+
+    expect(grammarWithoutUnitProductions).toEqual(expected);
+  });
 });
