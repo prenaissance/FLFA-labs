@@ -229,7 +229,7 @@ export class Grammar {
   }
 
   withoutNonGeneratingProductions(): Grammar {
-    const { start, productions, terminal, nonTerminal } = this;
+    const { start, productions, terminal } = this;
 
     // start with non-transitive generating productions
     const generatingNonTerminalsSet = new Set(
@@ -318,5 +318,50 @@ export class Grammar {
       newNonTerminal,
       terminal,
     ).withoutLongProductions();
+  }
+
+  // all right hand sides must have length 1-2 at this point
+  withoutChainProductions(): Grammar {
+    const { start, productions, nonTerminal, terminal } = this;
+    const firstChainProduction = productions.find(
+      ({ to }) =>
+        to.length === 2 &&
+        (nonTerminal.includes(to[0])
+          ? !nonTerminal.includes(to[1])
+          : nonTerminal.includes(to[1])),
+    );
+
+    if (!firstChainProduction) {
+      return this.clone();
+    }
+    const replacedTerminal = firstChainProduction.to.find((word) =>
+      terminal.includes(word),
+    )!;
+
+    const newNonTerminalSymbol = getAvailableLetter(nonTerminal);
+    const newNonTerminal = [...nonTerminal, newNonTerminalSymbol];
+    const newProductions = [
+      ...productions.map(({ from, to }) =>
+        to.includes(replacedTerminal) && to.length === 2
+          ? {
+              from,
+              to: to.map((word) =>
+                word === replacedTerminal ? newNonTerminalSymbol : word,
+              ),
+            }
+          : { from, to },
+      ),
+      {
+        from: [newNonTerminalSymbol],
+        to: [replacedTerminal],
+      },
+    ];
+
+    return new Grammar(
+      start,
+      newProductions,
+      newNonTerminal,
+      terminal,
+    ).withoutChainProductions();
   }
 }

@@ -274,4 +274,36 @@ describe("lab4", () => {
 
     expect(grammarWithoutLongProductions).toEqual(expected);
   });
+
+  it("should remove chain productions", () => {
+    const grammar = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["A", "B"] },
+        { from: ["A"], to: ["a", "B"] },
+        { from: ["B"], to: ["A", "b"] },
+        { from: ["B"], to: ["b"] },
+      ],
+      ["S", "A", "B"],
+      ["a", "b"],
+    );
+
+    const grammarWithoutChainProductions = grammar.withoutChainProductions();
+
+    const expected = new Grammar(
+      "S",
+      [
+        { from: ["S"], to: ["A", "B"] },
+        { from: ["A"], to: ["C", "B"] },
+        { from: ["B"], to: ["A", "D"] },
+        { from: ["B"], to: ["b"] },
+        { from: ["C"], to: ["a"] },
+        { from: ["D"], to: ["b"] },
+      ],
+      ["S", "A", "B", "C", "D"],
+      ["a", "b"],
+    );
+
+    expect(grammarWithoutChainProductions).toEqual(expected);
+  });
 });
