@@ -254,7 +254,6 @@ export class Grammar {
         .filter(({ to }) => to.every((word) => terminal.includes(word)))
         .flatMap(({ from }) => from),
     );
-    generatingNonTerminalsSet;
 
     let foundNewNonTerminals = true;
     while (foundNewNonTerminals) {
