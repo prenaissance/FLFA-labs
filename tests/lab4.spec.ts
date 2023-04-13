@@ -1,30 +1,7 @@
-import { Grammar, Production } from "@/grammar/grammar";
 import { describe, it, expect } from "vitest";
 
-const v2Start = "S";
-const v2NonTerminals = ["S", "A", "B", "C", "D"];
-const v2Terminals = ["a", "b"];
-const v2Productions: Production[] = [
-  { from: ["S"], to: ["a", "B"] },
-  { from: ["S"], to: ["b", "A"] },
-  { from: ["A"], to: ["B"] },
-  { from: ["A"], to: ["b"] },
-  { from: ["A"], to: ["a", "D"] },
-  { from: ["A"], to: ["A", "S"] },
-  { from: ["A"], to: ["b", "A", "A", "B"] },
-  { from: ["A"], to: [] },
-  { from: ["B"], to: ["b"] },
-  { from: ["B"], to: ["b", "S"] },
-  { from: ["C"], to: ["A", "B"] },
-  { from: ["D"], to: ["B", "B"] },
-];
-
-const v2Grammar = new Grammar(
-  v2Start,
-  v2Productions,
-  v2NonTerminals,
-  v2Terminals,
-);
+import { Grammar } from "@/grammar/grammar";
+import { v2Grammar } from "@/fixtures/lab4-grammars";
 
 describe("lab4", () => {
   it("should clone grammar", () => {

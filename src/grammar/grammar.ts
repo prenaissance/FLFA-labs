@@ -29,6 +29,23 @@ export class Grammar {
     readonly terminal: string[],
   ) {}
 
+  toString(): string {
+    const { start, productions, terminal, nonTerminal } = this;
+    return (
+      `Start: ${start}\n` +
+      `Terminal symbols: ${terminal.sort().join(", ")}\n` +
+      `Non-terminal symbols: ${nonTerminal.sort().join(", ")}\n` +
+      `Productions:\n${productions
+        .map(({ from, to }) => `  ${from.join("")} -> ${to.join("")}`)
+        .sort()
+        .join("\n")}`
+    );
+  }
+
+  valueOf(): string {
+    return this.toString();
+  }
+
   clone(): Grammar {
     const { start, productions, nonTerminal, terminal } = this;
     return new Grammar(
@@ -363,5 +380,13 @@ export class Grammar {
       newNonTerminal,
       terminal,
     ).withoutChainProductions();
+  }
+
+  toChomskyNormalForm(): Grammar {
+    return this.withoutNullProductions()
+      .withoutUnitProductions()
+      .withoutUselessProductions()
+      .withoutLongProductions()
+      .withoutChainProductions();
   }
 }
