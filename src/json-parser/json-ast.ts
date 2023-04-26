@@ -1,4 +1,5 @@
 import { pipe } from "fp-ts/function";
+
 import * as P from "@/parser";
 import { number, bool, str, null_ } from "./sub-parsers";
 
@@ -43,35 +44,35 @@ export type JsonNode =
   | ArrayNode
   | ObjectNode;
 
-export const numberNode: P.Parser<NumberNode> = pipe(
+const numberNode: P.Parser<NumberNode> = pipe(
   number,
   P.withSpacing,
   P.map((value) => ({ type: NodeType.NumberLiteral, value })),
 );
 
-export const stringNode: P.Parser<StringNode> = pipe(
+const stringNode: P.Parser<StringNode> = pipe(
   str,
   P.withSpacing,
   P.map((value) => ({ type: NodeType.StringLiteral, value })),
 );
 
-export const booleanNode: P.Parser<BooleanNode> = pipe(
+const booleanNode: P.Parser<BooleanNode> = pipe(
   bool,
   P.withSpacing,
   P.map((value) => ({ type: NodeType.BooleanLiteral, value })),
 );
 
-export const nullNode: P.Parser<NullNode> = pipe(
+const nullNode: P.Parser<NullNode> = pipe(
   null_,
   P.withSpacing,
   P.map(() => ({ type: NodeType.NullLiteral, value: null })),
 );
 
-export const jsonNode = P.lazy(() =>
+const jsonNode = P.lazy(() =>
   P.oneOf(numberNode, stringNode, booleanNode, nullNode, arrayNode, objectNode),
 );
 
-export const arrayNode: P.Parser<ArrayNode> = pipe(
+const arrayNode: P.Parser<ArrayNode> = pipe(
   P.sepBy(P.withSpacing(P.char(",")))(jsonNode),
   P.map((children) => ({ type: NodeType.Array as const, children })),
   P.between(P.char("["), P.char("]")),
@@ -84,9 +85,11 @@ const propertyNode: P.Parser<PropertyNode> = pipe(
   P.map(([key, , value]) => ({ type: NodeType.Property, key, value })),
 );
 
-export const objectNode: P.Parser<ObjectNode> = pipe(
+const objectNode: P.Parser<ObjectNode> = pipe(
   P.sepBy(P.withSpacing(P.char(",")))(propertyNode),
   P.map((children) => ({ type: NodeType.Object as const, children })),
   P.between(P.char("{"), P.char("}")),
   P.withSpacing,
 );
+
+export const parseJsonToAst = (str: string) => P.run(str)(jsonNode);

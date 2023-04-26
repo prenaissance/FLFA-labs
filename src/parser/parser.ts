@@ -1,6 +1,6 @@
 import * as E from "fp-ts/Either";
 import * as I from "./input";
-import { flow } from "fp-ts/function";
+import { flow, pipe } from "fp-ts/function";
 
 export type ParserSuccess<A> = {
   value: A;
@@ -18,10 +18,22 @@ export type Parser<A> = (input: I.Input) => ParserResult<A>;
 
 export type inferParserType<T> = T extends Parser<infer A> ? A : never;
 
-export const run =
+export const runSafe =
   (text: string) =>
   <A>(parser: Parser<A>) =>
     parser(I.of(text));
+
+export const run =
+  (text: string) =>
+  <A>(parser: Parser<A>): A =>
+    E.getOrElseW((e: ParserError) => {
+      throw new Error(`Parsing error ${e}`);
+    })(
+      pipe(
+        parser(I.of(text)),
+        E.map(({ value }) => value),
+      ),
+    );
 
 // always succeeds without consuming any input
 export const success =

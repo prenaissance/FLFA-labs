@@ -24,7 +24,7 @@ describe("json parser", () => {
   it.each(["0.123", "-14", "12e-3", "13.2e+9", "0"])(
     `should parse number %s`,
     (input) => {
-      const result = P.run(input)(number);
+      const result = P.runSafe(input)(number);
 
       expect(E.isRight(result)).toBe(true);
       expect(result._tag === "Right" && result.right.value).toBe(Number(input));
@@ -34,7 +34,7 @@ describe("json parser", () => {
   it.each(["00", ".1", "1.", "2e", "01.12"])(
     `should fail to parse number %s`,
     (input) => {
-      const result = P.run(input)(number);
+      const result = P.runSafe(input)(number);
 
       const pointer =
         (result._tag === "Left" && result.left.input.index) ||
@@ -47,12 +47,12 @@ describe("json parser", () => {
 
   it("should parse string", () => {
     const input = '"hello world"';
-    const result1 = P.run(input)(str);
+    const result1 = P.runSafe(input)(str);
 
     expect(E.isRight(result1)).toBe(true);
     expect(result1._tag === "Right" && result1.right.value).toBe("hello world");
 
-    const result2 = P.run('"broken string')(str);
+    const result2 = P.runSafe('"broken string')(str);
     expect(E.isLeft(result2)).toBe(true);
   });
 
@@ -70,14 +70,14 @@ describe("json parser", () => {
       success: false,
     },
   ])("should parse booleans", ({ input, success }) => {
-    const result = P.run(input)(bool);
+    const result = P.runSafe(input)(bool);
 
     expect(E.isRight(result)).toBe(success);
   });
 
   it("should parse arrays of primitives", () => {
     const input = '[1, "hello", true]';
-    const result = P.run(input)(array);
+    const result = P.runSafe(input)(array);
 
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual([
@@ -89,7 +89,7 @@ describe("json parser", () => {
 
   it("should parse arrays with nested arrays", () => {
     const input = '[1, "hello", [true, false]]';
-    const result = P.run(input)(array);
+    const result = P.runSafe(input)(array);
 
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual([
@@ -101,7 +101,7 @@ describe("json parser", () => {
 
   it("should parse objects with primitive values", () => {
     const input = '{"a": 1, "b": "hello", "c": true}';
-    const result = P.run(input)(object);
+    const result = P.runSafe(input)(object);
 
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual({
@@ -113,7 +113,7 @@ describe("json parser", () => {
 
   it("should parse objects with nested objects", () => {
     const input = '{"a": 1, "b": "hello", "c": {"d": true}}';
-    const result = P.run(input)(object);
+    const result = P.runSafe(input)(object);
 
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual({
@@ -125,7 +125,7 @@ describe("json parser", () => {
 
   it("should parse objects with array keys", () => {
     const input = '{"a": 1, "b": "hello", "c": {"d": true}, "e": [1, 2, 3]}';
-    const result = P.run(input)(object);
+    const result = P.runSafe(input)(object);
 
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual({
@@ -145,7 +145,7 @@ describe("json parser", () => {
     { a: 1, b: 2 },
     { a: 1, b: 2, c: [null, "12", 3] },
   ])("should parse %s as a valid json", (input) => {
-    const result = P.run(JSON.stringify(input))(json);
+    const result = P.runSafe(JSON.stringify(input))(json);
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual(input);
   });
@@ -164,7 +164,7 @@ describe("json parser", () => {
       expected: kitchenSinkTokens,
     },
   ])("should lex json", ({ input, expected }) => {
-    const result = P.run(input)(lex);
+    const result = P.runSafe(input)(lex);
 
     expect(E.isRight(result)).toBe(true);
     expect(result._tag === "Right" && result.right.value).toEqual(expected);
