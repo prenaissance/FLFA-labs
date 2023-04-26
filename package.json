@@ -13,7 +13,8 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx .",
     "demo:graph": "tsx demo/serialize-to-dot.ts",
-    "demo:cnf": "tsx demo/cnf.ts"
+    "demo:cnf": "tsx demo/cnf.ts",
+    "demo:ast": "tsx demo/json-ast.ts"
   },
   "keywords": [],
   "author": "prenaissance",
@@ -37,6 +38,7 @@
     "vitest": "^0.29.5"
   },
   "dependencies": {
-    "fp-ts": "^2.13.1"
+    "fp-ts": "^2.13.1",
+    "yaml": "^2.2.2"
   }
 }
